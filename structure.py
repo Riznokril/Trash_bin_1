@@ -52,10 +52,12 @@ class Binary_tree:
         arr = []
         if self.head == None:
             print("There is nothing to print")
+            
         else:
             arr.append(self.head.data)
             self.print_children(self.head, arr)
-            return(arr)
+        
+        return(arr)
 
 
     def add_Node(self, current, data):
