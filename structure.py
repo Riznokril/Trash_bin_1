@@ -9,29 +9,7 @@ class Binary_tree:
 
     def __init__(self):
         self.head = None
-
-    def add(self, data):
-
-        new_Node = Node(data)
-
-        if self.head == None:
-            self.head = new_Node
-
-        else:
-            current = self.head
-            while current:
-                while current.right or current.left :
-                    if current.data < new_Node.data:
-                        current = current.right
-                    else:
-                        current = current.left                
-
-                if current.data < new_Node.data:
-                    current.right = new_Node
-                    new_Node.parent = current
-                else:
-                    current.left = new_Node
-                    new_Node.parent = current
+        
     
     def search(self, data):
 
@@ -42,53 +20,132 @@ class Binary_tree:
         else:
             current = self.head
 
-            while current:
+            while current != None:
                 if new_Node.data == current.data:
-                    return True
-                elif new_Node.data > current.data:
-                    current = current.right
-                    if current.right and current.left == None:
+                    return current
+                if new_Node.data > current.data:
+                    if current.right == None:
                         return False
-                elif new_Node.data < current.data:
-                    current = current.left
-                    if current.right and current.left == None:
+                    else:
+                        current = current.right
+                if new_Node.data < current.data:                    
+                    if current.left == None:
                         return False    
-                
+                    else:
+                        current = current.left
 
-    def delete(self, data):
+
+    def print_children(self, current, arr):
+        
+        if current.right != None:            
+            arr.append(current.right.data)            
+        if current.left != None:
+            arr.append(current.left.data)
+                    
+        if current.right != None:
+            self.print_children(current.right, arr)
+        if current.left != None:
+            self.print_children(current.left, arr)        
+        
+    
+    def print_binary_tree(self):
+        arr = []
+        if self.head == None:
+            print("There is nothing to print")
+        else:
+            arr.append(self.head.data)
+            self.print_children(self.head, arr)
+            return(arr)
+
+
+    def add_Node(self, current, data):
 
         new_Node = Node(data)
 
-        if self.search(data) == False:
-            print("This object doesn't exist in this structure")
+        if current.data < data:
+            if current.right == None:
+                current.right = new_Node
+                new_Node.parent = current
+                
+            else:
+                current = current.right
+                self.add_Node(current, data)
         else:
-            current = self.head
-            while current.right or current.left:
-                if new_Node.data == current.data:
-                    
-                    if current.right == None:
-                        current.parent.right = current.right
-                    while current.right:
-                        current.parent.right = current.right
-                        current = current.right
-                        
-                elif new_Node.data > current.data:
-                    current = current.right
-
-                elif new_Node.data < current.data:
-                    current = current.left
-
-
-    def print_children(self, current):
-        current_right = current.right
-        current_left = current.left
-        print(current_right)
-        print(current_left)
+            if current.left == None:
+                current.left = new_Node
+                new_Node.parent = current
+                
+            else:
+                current = current.left
+                self.add_Node(current, data)
         
 
-    def print_binary_tree(self):
+    def add(self, data):
         if self.head == None:
-            print("There is nothong to print")
+            self.head = Node(data)
         else:
-            print(self.head.data)
-        self.print_children()
+            self.add_Node(self.head, data)
+    
+
+    def delete_Node(self, current):
+
+            if current == self.head and current.right == None and current.left == None:
+                self.head = None
+                return 0
+            
+            elif current == self.head and current.right == None and current.left != None:
+                self.head = current.left
+                return 0
+
+            elif current == self.head and current.right != None and current.left == None:
+                self.head = current.right
+                return 0
+
+            elif current != self.head and current.right == None and current.left == None:
+                if current.parent.right == current:
+                    current.parent.right = None
+                elif current.parent.left == current:
+                    current.parent.left = None
+                
+                return 0
+
+            elif current != self.head and current.right == None and current.left != None:
+                if current.parent.right == current:
+                    current.parent.right = current.left
+                    current.left.parent = current.parent
+                    
+                elif current.parent.left == current:
+                    current.parent.left = current.left
+                    current.left.parent = current.parent
+
+                return 0
+            
+            elif current != self.head and current.right != None and current.left == None:
+                if current.parent.right == current:
+                    current.parent.right = current.right
+                    current.right.parent = current.parent
+                    
+                elif current.parent.left == current:
+                    current.parent.left = current.right
+                    current.right.parent = current.parent
+                
+                return 0
+            
+            elif current.right != None and current.left != None:
+                current.data = current.right.data                
+                self.delete_Node(current.right)
+                
+                    
+    def delete(self, data):
+        if self.head == None:
+            print("This object doesn't exist in this structure")
+        else:            
+            if self.search(data) == False:
+                print("This object doesn't exist in this structure")
+            else:               
+                current = self.search(data)
+                self.delete_Node(current)
+
+
+    def delete_all_elements(self):
+        self.head = None
